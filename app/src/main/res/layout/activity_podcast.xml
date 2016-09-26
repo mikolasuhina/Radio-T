@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_podcast"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
+    tools:context="com.example.mikola.podcast.PodcastActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@color/coloruse"
+        android:weightSum="100">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="15">
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/podcast_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="70"
+
+
+            android:gravity="center_horizontal|center_vertical"
+            android:text="TextView"
+            android:textSize="30sp" />
+
+        <ImageButton
+            android:scaleType="centerCrop"
+            android:id="@+id/download"
+            android:layout_width="0dp"
+
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="15"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:src="@drawable/music_download" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/podcast_img_and_desc"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="80"
+        android:orientation="vertical"
+        android:weightSum="100">
+
+        <ImageView
+            android:id="@+id/podcast_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:layout_weight="40"
+            app:srcCompat="@mipmap/ic_launcher" />
+
+        <ListView
+            android:id="@+id/podcast_description"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_weight="60"
+            android:divider="@android:color/white"
+            android:dividerHeight="10.0sp" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_weight="10"
+        android:background="@color/coloruse"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="100">
+
+        <FrameLayout
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10">
+
+            <ImageButton
+                android:padding="5dp"
+                android:id="@+id/play_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector"
+                android:gravity="center_horizontal|center_vertical"
+
+                android:src="@drawable/play" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="70">
+
+            <SeekBar
+                android:progressDrawable="@drawable/progress_bg"
+                android:thumb="@drawable/tumb"
+
+                android:id="@+id/progres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/time_this_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:textSize="13sp"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/time_all__info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:textSize="10sp"
+                android:typeface="monospace" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
