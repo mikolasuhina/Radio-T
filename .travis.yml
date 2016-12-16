@@ -1,14 +1,21 @@
 language: android
+jdk: oraclejdk8
+sudo:false
 android:
         components:
+                - tools
                 - platform-tools
                 - build-tools-24.0.2
                 - android-24
+                - android-22
+                - sys-img-armeabi-v7a-android-24
                 - extra-android-m2repository
-script:
-        - ./gradlew build
-before_install:
-        - chmod +x gradlew
-branches:
-        only:
-                - master
+                
+before_script:
+  # Create and start emulator
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+script: ./gradlew connectedAndroidTest
