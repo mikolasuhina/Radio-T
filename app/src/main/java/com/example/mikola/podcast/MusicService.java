@@ -1,18 +1,13 @@
 package com.example.mikola.podcast;
 
 import android.annotation.TargetApi;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -23,9 +18,6 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by mikola on 22.09.2016.
@@ -41,7 +33,7 @@ public class MusicService extends Service {
         return binder;
     }
 
-    Podcast podcast;
+    PodcastItem podcast;
 
     RemoteViews notificationView;
     Intent playIntent;

@@ -1,22 +1,17 @@
 package com.example.mikola.podcast;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by mikola on 21.09.2016.
@@ -24,12 +19,12 @@ import java.util.List;
 
 public class AdapterPodcasts extends BaseAdapter {
 
-    ArrayList <Podcast> data;
+    ArrayList <PodcastItem> data;
     Context context;
     LayoutInflater layoutInflater;
 
 
-    public AdapterPodcasts(ArrayList<Podcast>data, Context context) {
+    public AdapterPodcasts(ArrayList<PodcastItem>data, Context context) {
         super();
         this.data = data;
         this.context = context;
@@ -56,10 +51,10 @@ public class AdapterPodcasts extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Podcast podcast = data.get(position);
+        PodcastItem podcast = data.get(position);
         if(position%2==0)
-        convertView= layoutInflater.inflate(R.layout.item, null);
-        else  convertView= layoutInflater.inflate(R.layout.item, null);
+        convertView= layoutInflater.inflate(R.layout.item_podcastst, null);
+        else  convertView= layoutInflater.inflate(R.layout.item_podcastst, null);
 
         TextView title=(TextView)convertView.findViewById(R.id.title);
         TextView data=(TextView)convertView.findViewById(R.id.data);
