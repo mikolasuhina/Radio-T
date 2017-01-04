@@ -18,7 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PodcastActivity" />
+        <activity android:name=".PodcastActivity">
+
+        </activity>
 
         <service android:name=".MusicService" />
         <service

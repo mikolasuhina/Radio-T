@@ -47,10 +47,6 @@ public class PodcastItem {
         return lSound;
     }
 
-    public void setlSound(int lSound) {
-        this.lSound = lSound;
-    }
-
     public PodcastItem(String title, Bitmap image, String data, String sound, String deck, int lSound, String urlImage) {
         this.title = title;
         this.image = image;
@@ -82,24 +78,14 @@ public class PodcastItem {
         return sound;
     }
 
-    public void setSound(String sound) {
-        this.sound = sound;
-    }
-
     public String getDeck() {
         return deck;
     }
 
-    public void setDeck(String deck) {
-        this.deck = deck;
-    }
+
 
     public String getUrlImage() {
         return urlImage;
-    }
-
-    public void setUrlImage(String urlImage) {
-        this.urlImage = urlImage;
     }
 
     public PodcastItem(String title, Bitmap image, String data) {

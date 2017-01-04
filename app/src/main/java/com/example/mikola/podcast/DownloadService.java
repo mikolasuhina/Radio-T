@@ -19,32 +19,35 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class DownloadService extends Service {
-    public DownloadService() {
-    }
-    String title;
-    String urdDownloading;
-    NotificationManager mNotifyManager;
-    NotificationCompat.Builder mBuilder;
-    Integer notificationID = 100;
-    int incr=0;
-    int lenghtOfFile=0;
+    public static final String URL_FOR_DOWNLOAD = "url_download";
+    public static final String FILE_NAME_FOR_DOWNLOAD = "name";
+
+    private String title;
+    private String urdDownloading;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private Integer notificationID = 100;
+    private int incr = 0;
+    private int lenghtOfFile = 0;
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        urdDownloading = intent.getStringExtra("url_download");
-         title = intent.getStringExtra("name");
+        urdDownloading = intent.getStringExtra(URL_FOR_DOWNLOAD);
+        title = intent.getStringExtra(FILE_NAME_FOR_DOWNLOAD);
         new DownloadFile().execute();
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setContentTitle(title)
-                .setContentText("завантаження . . .")
+                .setContentText(getString(R.string.downloading))
                 .setSmallIcon(android.R.drawable.stat_sys_download);
 
         new Thread(
@@ -53,7 +56,7 @@ public class DownloadService extends Service {
                     public void run() {
 
 
-                        while (incr<100) {
+                        while (incr < 100) {
 
                             mBuilder.setProgress(100, incr, false);
 
@@ -61,15 +64,15 @@ public class DownloadService extends Service {
 
                             try {
 
-                                Thread.sleep(5*1000);
+                                Thread.sleep(5 * 1000);
                             } catch (InterruptedException e) {
-                              ;
+                                ;
                             }
                         }
 
-                        mBuilder.setContentText("Завантаження завершене")
+                        mBuilder.setContentText(getString(R.string.download_complete))
 
-                                .setProgress(0,0,false);
+                                .setProgress(0, 0, false);
                         mNotifyManager.notify(notificationID, mBuilder.build());
                     }
                 }
@@ -88,11 +91,11 @@ public class DownloadService extends Service {
                 URLConnection conexion = url.openConnection();
                 conexion.connect();
 
-                 lenghtOfFile = conexion.getContentLength();
+                lenghtOfFile = conexion.getContentLength();
 
 
                 InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream("/sdcard//"+title+".mp3");
+                OutputStream output = new FileOutputStream("/sdcard//" + title + ".mp3");
 
                 byte data[] = new byte[1024];
 
@@ -122,11 +125,10 @@ public class DownloadService extends Service {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            incr=values[0];
+            incr = values[0];
             super.onProgressUpdate(values);
         }
     }
-
 
 
 }

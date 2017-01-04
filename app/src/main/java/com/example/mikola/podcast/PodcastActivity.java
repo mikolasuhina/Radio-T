@@ -29,71 +29,38 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PodcastActivity extends Activity implements View.OnClickListener {
-    PodcastItem podcast;
-    ImageButton play_pause;
-    ImageView image;
-    ListView description;
-    TextView title;
-    Context context;
-    SeekBar seekBar;
-    TextView info_time_this;
-    TextView info_time_all;
-    ArrayList<ItemDescriptionList> itemDescriptionList = new ArrayList<>();
-    String descriptionText;
+import static com.example.mikola.podcast.DownloadService.FILE_NAME_FOR_DOWNLOAD;
+import static com.example.mikola.podcast.DownloadService.URL_FOR_DOWNLOAD;
 
-    MusicService musicService;
+public class PodcastActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener {
+
+    private ImageButton play_pause;
+    private ImageView image;
+    private ListView description;
+    private TextView title;
+    private SeekBar seekBar;
+    private TextView info_time_this;
+    private TextView info_time_all;
+    private ImageButton download;
+
+    private ArrayList<ItemDescriptionList> itemDescriptionList = new ArrayList<>();
+    private Context context;
+    private PodcastItem podcast;
+
+    private MusicService musicService;
 
     boolean bound;
     boolean flag;
-    Intent intent;
-    ImageButton download;
-    File myFile;
-
-
-    void setPlayerParam() {
-        if (bound && MainActivity.pos == musicService.usePosPodcastFromList && MusicService.isRunning()) {
-            if (musicService.isplaing())
-                play_pause.setImageResource(R.drawable.pause);
-            else play_pause.setImageResource(R.drawable.play);
-
-            seekBar.setMax(musicService.getLenghtSound());
-            seekBar.setProgress(musicService.getCurrentPosition());
-
-            info_time_all.setText(getTimeString(musicService.mediaPlayer.getDuration()));
-            info_time_this.setText(getTimeString(musicService.getCurrentPosition()));
-
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast);
-        podcast = MainActivity.thisPodcast;
-        myFile = new File("/sdcard//" + podcast.getTitle() + ".mp3");
 
-        download = (ImageButton) findViewById(R.id.download);
-
-        title = (TextView) findViewById(R.id.podcast_title);
-
-        description = (ListView) findViewById(R.id.podcast_description);
-        description.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (itemDescriptionList.get(position).getLinc().contains("http"))
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(itemDescriptionList.get(position).getLinc())));
-            }
-        });
-        intent = new Intent(this, MusicService.class);
-        image = (ImageView) findViewById(R.id.podcast_image);
-        title.setText(podcast.getTitle());
         context = this;
 
-        image.setImageBitmap(podcast.getImage());
-        descriptionText = podcast.getDeck();
-        info_time_all = (TextView) findViewById(R.id.time_all__info);
-        info_time_this = (TextView) findViewById(R.id.time_this_info);
+
+        podcast = MainActivity.thisPodcast;
 
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
@@ -102,30 +69,42 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        seekBar = (SeekBar) findViewById(R.id.progres);
-        info_time_all.setText((getTimeString(mediaPlayer.getDuration())));
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        download = (ImageButton) findViewById(R.id.download);
+
+        title = (TextView) findViewById(R.id.podcast_title);
+        title.setText(podcast.getTitle());
+
+
+        description = (ListView) findViewById(R.id.podcast_description);
+        description.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser)
-                    musicService.seekTo(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (itemDescriptionList.get(position).getLinc().contains("http"))
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(itemDescriptionList.get(position).getLinc())));
             }
         });
-        play_pause = (ImageButton) findViewById(R.id.play_pause);
-        // setPlayerParam();
+
+
+
+        image = (ImageView) findViewById(R.id.podcast_image);
+        image.setImageBitmap(podcast.getImage());
+
+
+        info_time_all = (TextView) findViewById(R.id.time_all_info);
+        info_time_all.setText((getTimeString(mediaPlayer.getDuration())));
+
+        info_time_this = (TextView) findViewById(R.id.time_this_info);
+
+        play_pause = (ImageButton) findViewById(R.id.play_pause_btn);
         play_pause.setOnClickListener(this);
+
+
+        seekBar = (SeekBar) findViewById(R.id.progres);
+        seekBar.setOnSeekBarChangeListener(this);
+
+
         final Handler mHandler = new Handler();
-//Make sure you update Seekbar on UI thread
         PodcastActivity.this.runOnUiThread(new Runnable() {
 
             @Override
@@ -158,7 +137,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
         });
 
 
-        new DescriptionTask().execute();
+        new DescriptionTask().execute(podcast.getDeck());
 
     }
 
@@ -166,12 +145,24 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this, MusicService.class);
-
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         setPlayerParam();
     }
 
+    private void setPlayerParam() {
+        if (bound && MainActivity.pos == musicService.usePosPodcastFromList && MusicService.isRunning()) {
+            if (musicService.isplaing())
+                play_pause.setImageResource(R.drawable.pause);
+            else play_pause.setImageResource(R.drawable.play);
 
+            seekBar.setMax(musicService.getLenghtSound());
+            seekBar.setProgress(musicService.getCurrentPosition());
+
+            info_time_all.setText(getTimeString(musicService.mediaPlayer.getDuration()));
+            info_time_this.setText(getTimeString(musicService.getCurrentPosition()));
+
+        }
+    }
     private String getTimeString(long millis) {
         StringBuffer buf = new StringBuffer();
 
@@ -193,7 +184,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.play_pause: {
+            case R.id.play_pause_btn: {
 
                 if (bound) {
 
@@ -212,11 +203,11 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
                 File myFile = new File("/sdcard//" + podcast.getTitle() + ".mp3");
 
                 if (myFile.exists()) {
-                    Toast.makeText(context, "Даний файл вже завантажено", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.file_exist, Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent = new Intent(context, DownloadService.class);
-                    intent.putExtra("url_download", podcast.getSound());
-                    intent.putExtra("name", podcast.getTitle());
+                    intent.putExtra(URL_FOR_DOWNLOAD, podcast.getSound());
+                    intent.putExtra(FILE_NAME_FOR_DOWNLOAD, podcast.getTitle());
                     startService(intent);
                 }
 
@@ -225,12 +216,28 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
 
     }
 
-    public class DescriptionTask extends AsyncTask<Void, Void, Void> {
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser)
+            musicService.seekTo(progress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    public class DescriptionTask extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... strings) {
 
-            org.jsoup.nodes.Document docHtml = Jsoup.parse(descriptionText);
+            org.jsoup.nodes.Document docHtml = Jsoup.parse(strings[0]);
 
             ArrayList<org.jsoup.nodes.Element> d = docHtml.getElementsByTag("ul");
             String linkHref = "";
@@ -258,13 +265,14 @@ public class PodcastActivity extends Activity implements View.OnClickListener {
             return null;
         }
 
+
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             AdapterItemDescription adapter = new AdapterItemDescription(itemDescriptionList, context);
 
-            if(myFile.exists()){
-               download.setImageResource(R.drawable.music_png);
+            if (new File("/sdcard//" + podcast.getTitle() + ".mp3").exists()) {
+                download.setImageResource(R.drawable.music_downloaded);
 
             }
             // присваиваем адаптер списку

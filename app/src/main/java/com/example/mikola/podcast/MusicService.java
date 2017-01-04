@@ -228,10 +228,10 @@ public class MusicService extends Service {
 
 
     private RemoteViews getComplexNotificationView() {
-        // Using RemoteViews to bind custom layouts into Notification
+        // Using RemoteViews to bind notification_view layouts into Notification
         notificationView = new RemoteViews(
                 this.getPackageName(),
-                R.layout.custom
+                R.layout.notification_view
         );
         // Locate and set the Image into customnotificationtext.xml ImageViews
         if (isplaing())
@@ -275,8 +275,8 @@ public class MusicService extends Service {
         } else {
             // Build a simpler notification, without buttons
             //
-            builder = (NotificationCompat.Builder) builder.setContentTitle("njkfdls")
-                    .setContentText("jkefl")
+            builder = (NotificationCompat.Builder) builder.setContentTitle(podcast.getTitle())
+                    .setContentText(podcast.getTitle())
                     .setSmallIcon(android.R.drawable.ic_menu_gallery);
         }
         return builder;

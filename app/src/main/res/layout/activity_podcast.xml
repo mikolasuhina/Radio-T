@@ -1,58 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_podcast"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="100"
     tools:context="com.example.mikola.podcast.PodcastActivity">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/top_layout_podcast_activity"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
-        android:background="@color/coloruse"
-        android:weightSum="100">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/coloruse">
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="15">
-
-        </FrameLayout>
+        <ImageButton
+            android:id="@+id/download"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:onClick="onClick"
+            android:scaleType="centerCrop"
+            android:src="@drawable/music_download" />
 
         <TextView
             android:id="@+id/podcast_title"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="70"
-
-
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_alignBottom="@+id/download"
+            android:layout_alignTop="@+id/download"
+            android:gravity="center"
             android:text="TextView"
             android:textSize="30sp" />
 
-        <ImageButton
-            android:scaleType="centerCrop"
-            android:id="@+id/download"
-            android:layout_width="0dp"
 
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="15"
-            android:gravity="center"
-            android:onClick="onClick"
-            android:src="@drawable/music_download" />
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <LinearLayout
-        android:id="@+id/podcast_img_and_desc"
+        android:id="@+id/content_layout_podcast_activity"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="80"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_layout_podcast_activity"
+        android:layout_above="@+id/player_layout_podcast_activity"
         android:orientation="vertical"
         android:weightSum="100">
 
@@ -78,57 +68,40 @@
     </LinearLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/player_layout_podcast_activity"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
-        android:layout_weight="10"
         android:background="@color/coloruse"
         android:gravity="center"
-        android:orientation="horizontal"
         android:weightSum="100">
 
-        <FrameLayout
 
-            android:layout_width="0dp"
+        <ImageButton
+            android:layout_centerVertical="true"
+            android:id="@+id/play_pause_btn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="10">
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/selector_list_item"
+            android:gravity="center"
+            android:padding="5dp"
+            android:src="@drawable/play" />
 
-            <ImageButton
-                android:padding="5dp"
-                android:id="@+id/play_pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/selector"
-                android:gravity="center_horizontal|center_vertical"
-
-                android:src="@drawable/play" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="70">
-
-            <SeekBar
-                android:progressDrawable="@drawable/progress_bg"
-                android:thumb="@drawable/tumb"
-
-                android:id="@+id/progres"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" />
-        </FrameLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/time_player_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="20"
-
             android:orientation="vertical">
 
             <TextView
+                android:text="12;12;12"
                 android:id="@+id/time_this_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,7 +110,8 @@
                 android:typeface="monospace" />
 
             <TextView
-                android:id="@+id/time_all__info"
+                android:text="12;12;12"
+                android:id="@+id/time_all_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal|center_vertical"
@@ -145,5 +119,14 @@
                 android:typeface="monospace" />
         </LinearLayout>
 
-    </LinearLayout>
-</LinearLayout>
+        <SeekBar
+            android:layout_centerInParent="true"
+            android:layout_toLeftOf="@+id/time_player_layout"
+            android:layout_toRightOf="@+id/play_pause_btn"
+            android:id="@+id/progres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+    </RelativeLayout>
+</RelativeLayout>
