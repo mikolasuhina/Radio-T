@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  */
 
 public class Podcast {
-    int id;
+
 
     public int getId() {
         return id;
@@ -17,14 +17,15 @@ public class Podcast {
         this.id = id;
     }
 
-    String title;
-    Bitmap image;
-    String data;
-    String sound;
-    String deck;
-    String urlImage;
-    int lSound;
-    boolean playing;
+    private int id;
+    private String title;
+    private Bitmap image;
+    private String data;
+    private String sound;
+    private String deck;
+    private String urlImage;
+
+    private boolean playing;
 
     public boolean isPlaying() {
         return playing;
@@ -42,26 +43,16 @@ public class Podcast {
         this.title = title;
     }
 
-    public int getlSound() {
-        return lSound;
-    }
 
-    public void setlSound(int lSound) {
-        this.lSound = lSound;
-    }
-
-    public Podcast(String title, Bitmap image, String data, String sound, String deck,int lSound, String urlImage) {
+    public Podcast(String title, Bitmap image, String data, String sound, String deck, String urlImage) {
         this.title = title;
         this.image = image;
         this.data = data;
         this.sound = sound;
         this.deck = deck;
-        this.lSound=lSound;
-        this.urlImage =urlImage;
+
+        this.urlImage = urlImage;
     }
-
-
-
 
 
     public Bitmap getImage() {
@@ -84,24 +75,20 @@ public class Podcast {
         return sound;
     }
 
-    public void setSound(String sound) {
-        this.sound = sound;
-    }
-
     public String getDeck() {
         return deck;
     }
 
-    public void setDeck(String deck) {
-        this.deck = deck;
-    }
+
 
     public String getUrlImage() {
         return urlImage;
     }
 
-    public void setUrlImage(String urlImage) {
-        this.urlImage = urlImage;
+    public Podcast(String title, Bitmap image, String data) {
+        this.title = title;
+        this.image = image;
+        this.data = data;
     }
 }
 

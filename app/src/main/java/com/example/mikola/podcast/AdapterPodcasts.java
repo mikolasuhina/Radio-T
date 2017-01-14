@@ -19,12 +19,12 @@ import java.util.ArrayList;
 
 public class AdapterPodcasts extends BaseAdapter {
 
-    ArrayList <PodcastItem> data;
+    ArrayList<Podcast> data;
     Context context;
     LayoutInflater layoutInflater;
 
 
-    public AdapterPodcasts(ArrayList<PodcastItem>data, Context context) {
+    public AdapterPodcasts(ArrayList<Podcast> data, Context context) {
         super();
         this.data = data;
         this.context = context;
@@ -51,30 +51,26 @@ public class AdapterPodcasts extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        PodcastItem podcast = data.get(position);
-        if(position%2==0)
-        convertView= layoutInflater.inflate(R.layout.item_podcastst, null);
-        else  convertView= layoutInflater.inflate(R.layout.item_podcastst, null);
-
-        TextView title=(TextView)convertView.findViewById(R.id.title);
-        TextView data=(TextView)convertView.findViewById(R.id.data);
-        ImageView image =(ImageView)convertView.findViewById(R.id.image) ;
-        ImageView useItem =(ImageView)convertView.findViewById(R.id.useItem) ;
+        Podcast podcast = data.get(position);
+        convertView = layoutInflater.inflate(R.layout.item_podcastst_right, null);
+        TextView title = (TextView) convertView.findViewById(R.id.title);
+        TextView data = (TextView) convertView.findViewById(R.id.data);
+        ImageView image = (ImageView) convertView.findViewById(R.id.image);
+        ImageView useItem = (ImageView) convertView.findViewById(R.id.useItem);
 
         title.setText(podcast.getTitle());
         data.setText(podcast.getData());
         image.setImageBitmap(podcast.getImage());
-        if(podcast.isPlaying()){
+        if (podcast.isPlaying()) {
             convertView.setBackgroundResource(R.color.coloruse);
             useItem.setBackgroundResource(R.drawable.animsound);
-         AnimationDrawable animation =(AnimationDrawable)useItem.getBackground();
-        animation.start();
+            AnimationDrawable animation = (AnimationDrawable) useItem.getBackground();
+            animation.start();
         }
 
 
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.left);
-            convertView.startAnimation(animation);
-
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.left);
+        convertView.startAnimation(animation);
 
 
         return convertView;

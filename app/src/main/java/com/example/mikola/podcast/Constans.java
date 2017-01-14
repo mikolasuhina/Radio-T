@@ -8,7 +8,7 @@ public class Constans {
     public static final String TITLE = "title";
     public static final String IMAGE = "img";
     public static final String DECK = "description";
-    public static final String ITEM = "item_podcastst";
+    public static final String ITEM = "item";
     public static final String URL = "url";
     public static final String MEDIA_CONTENT = "media:content";
     public static final String PUB_DATA = "pubDate";

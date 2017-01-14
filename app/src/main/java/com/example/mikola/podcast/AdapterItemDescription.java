@@ -19,12 +19,12 @@ import java.util.ArrayList;
 
 public class AdapterItemDescription extends BaseAdapter {
 
-    ArrayList <ItemDescriptionList> data;
+    ArrayList<ItemDescriptionList> data;
     Context context;
     LayoutInflater layoutInflater;
 
 
-    public AdapterItemDescription(ArrayList<ItemDescriptionList>data, Context context) {
+    public AdapterItemDescription(ArrayList<ItemDescriptionList> data, Context context) {
         super();
         this.data = data;
         this.context = context;
@@ -52,25 +52,22 @@ public class AdapterItemDescription extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ItemDescriptionList  podcast = data.get(position);
-        convertView= layoutInflater.inflate(R.layout.item_description, null);
+        ItemDescriptionList itemDescription = data.get(position);
+        convertView = layoutInflater.inflate(R.layout.item_description, null);
 
-        TextView title=(TextView)convertView.findViewById(R.id.text_post);
+        TextView title = (TextView) convertView.findViewById(R.id.text_post);
 
-        if(podcast.getLinc().length()>5){
+        if (itemDescription.getLinc()!=null) {
             title.setTextColor(Color.BLUE);
 
-
-           title.setPaintFlags(title.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            title.setPaintFlags(title.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         }
 
-        if(podcast.getTime().length()>0)
-        title.setText(podcast.getText()+" - "+podcast.getTime());
-        else
-        {title.setText(podcast.getText());
-         }
-
-
+        if (itemDescription.getTime().length() > 0)
+            title.setText(itemDescription.getText() + " - " + itemDescription.getTime());
+        else {
+            title.setText(itemDescription.getText());
+        }
 
 
         return convertView;

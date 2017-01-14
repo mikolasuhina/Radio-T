@@ -101,7 +101,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:text="12;12;12"
                 android:id="@+id/time_this_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,7 +109,6 @@
                 android:typeface="monospace" />
 
             <TextView
-                android:text="12;12;12"
                 android:id="@+id/time_all_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.RequiresApi;
@@ -29,8 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.example.mikola.podcast.DownloadService.FILE_NAME_FOR_DOWNLOAD;
-import static com.example.mikola.podcast.DownloadService.URL_FOR_DOWNLOAD;
 
 public class PodcastActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener {
 
@@ -45,7 +44,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
 
     private ArrayList<ItemDescriptionList> itemDescriptionList = new ArrayList<>();
     private Context context;
-    private PodcastItem podcast;
+    private Podcast podcast;
 
     private MusicService musicService;
 
@@ -60,11 +59,11 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
         context = this;
 
 
-        podcast = MainActivity.thisPodcast;
-
+        podcast = MainActivity.currPodcast;
+        //повний пиздець
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(MainActivity.thisPodcast.getSound());
+            mediaPlayer.setDataSource(podcast.getSound());
             mediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,8 +79,9 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
         description.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (itemDescriptionList.get(position).getLinc().contains("http"))
+                if (itemDescriptionList.get(position).getLinc()!=null)
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(itemDescriptionList.get(position).getLinc())));
+
             }
         });
 
@@ -187,8 +187,6 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
             case R.id.play_pause_btn: {
 
                 if (bound) {
-
-
                     if (musicService.play_pause())
                         play_pause.setImageResource(R.drawable.pause);
                     else play_pause.setImageResource(R.drawable.play);
@@ -200,15 +198,12 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
             }
             case R.id.download: {
 
-                File myFile = new File("/sdcard//" + podcast.getTitle() + ".mp3");
+                File myFile = new File(Environment.DIRECTORY_DOWNLOADS+"/" + podcast.getTitle() + ".mp3");
 
                 if (myFile.exists()) {
                     Toast.makeText(context, R.string.file_exist, Toast.LENGTH_LONG).show();
                 } else {
-                    Intent intent = new Intent(context, DownloadService.class);
-                    intent.putExtra(URL_FOR_DOWNLOAD, podcast.getSound());
-                    intent.putExtra(FILE_NAME_FOR_DOWNLOAD, podcast.getTitle());
-                    startService(intent);
+                   new DownloadSound(this,podcast);
                 }
 
             }
@@ -240,25 +235,25 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
             org.jsoup.nodes.Document docHtml = Jsoup.parse(strings[0]);
 
             ArrayList<org.jsoup.nodes.Element> d = docHtml.getElementsByTag("ul");
-            String linkHref = "";
-            String linkText = "";
-            String emText = "";
+            String itemLink = "";
+            String itemText = "";
+            String itemTime = "";
 
             for (org.jsoup.nodes.Element elLI : d.get(0).select("li")) {
                 org.jsoup.nodes.Element link = elLI.select("a").first();
                 if (link != null) {
-                    linkHref = link.attr("href");
-                    linkText = link.text();
+                    itemLink = link.attr("href");
+                    itemText = link.text();
                 } else {
-                    linkHref = "";
-                    linkText = elLI.text();
+                    itemLink = null;
+                    itemText = elLI.text();
                 }
 
                 org.jsoup.nodes.Element em = elLI.select("em").first();
                 if (em != null)
-                    emText = em.text();
-                else emText = "";
-                itemDescriptionList.add(new ItemDescriptionList(linkHref, linkText, emText));
+                    itemTime = em.text();
+                else itemTime = "";
+                itemDescriptionList.add(new ItemDescriptionList(itemLink, itemText, itemTime));
             }
 
 
@@ -271,7 +266,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
             super.onPostExecute(aVoid);
             AdapterItemDescription adapter = new AdapterItemDescription(itemDescriptionList, context);
 
-            if (new File("/sdcard//" + podcast.getTitle() + ".mp3").exists()) {
+            if (new File(Environment.DIRECTORY_DOWNLOADS+"/" + podcast.getTitle() + ".mp3").exists()) {
                 download.setImageResource(R.drawable.music_downloaded);
 
             }

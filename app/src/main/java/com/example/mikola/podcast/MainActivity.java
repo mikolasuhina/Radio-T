@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -34,17 +33,18 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+
 import static com.example.mikola.podcast.Constans.FILE_SIZE;
 import static com.example.mikola.podcast.Constans.ITEM;
 import static com.example.mikola.podcast.Constans.MEDIA_CONTENT;
 import static com.example.mikola.podcast.Constans.PUB_DATA;
 import static com.example.mikola.podcast.Constans.SRC;
-import static com.example.mikola.podcast.Constans.TITLE;
+
 import static com.example.mikola.podcast.Constans.dataUrl;
 
-public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener , View.OnClickListener {
-    public static ArrayList<PodcastItem> podcasts = new ArrayList<>();
-    public static PodcastItem thisPodcast;
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
+    public static ArrayList<Podcast> podcasts;
+    public static Podcast currPodcast;
     public static int pos;
 
     private ListView listOfPodcast;
@@ -72,6 +72,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         listOfPodcast = (ListView) findViewById(R.id.list_podcasts);
 
         refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeColors(Color.BLUE);
         statusText.setOnClickListener(this);
 
 
@@ -80,7 +81,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                thisPodcast = podcasts.get(position);
+                currPodcast = podcasts.get(position);
                 pos = position;
 
                 Intent intent = new Intent(context, PodcastActivity.class);
@@ -89,10 +90,19 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 Log.d("tag", "start PodcastActivity");
             }
         });
-        adapter = new AdapterPodcasts(podcasts, context);
 
-        listOfPodcast.setAdapter(adapter);
-        new RequestTask().execute();
+        if (!MusicService.isRunning()){
+            new RequestTask().execute();}
+        else {
+            adapter = new AdapterPodcasts(podcasts, context);
+            listOfPodcast.setAdapter(adapter);
+            listOfPodcast.setVisibility(View.VISIBLE);
+            statusImg.clearAnimation();
+            adapter.notifyDataSetChanged();
+            statusText.setText(R.string.synchronize_complete);
+            statusImg.setImageResource(R.drawable.ic_done_black_24dp);
+
+        }
 
     }
 
@@ -119,14 +129,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         refreshLayout.setRefreshing(true);
         new RequestTask().execute();
-        refreshLayout.setRefreshing(false);
+
 
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.status_text:{
+        switch (view.getId()) {
+            case R.id.status_text: {
                 new RequestTask().execute();
                 break;
             }
@@ -134,7 +144,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
 
-    class RequestTask extends AsyncTask<String, String, String> {
+    class RequestTask extends AsyncTask<String, String, Integer> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -143,11 +153,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             statusText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             statusText.setText(R.string.synchronize);
 
-            podcasts.clear();
+            podcasts = new ArrayList<>();
+            adapter = new AdapterPodcasts(podcasts, context);
+            listOfPodcast.setAdapter(adapter);
+
         }
 
         @Override
-        protected String doInBackground(String... uri) {
+        protected Integer doInBackground(String... uri) {
 
             URL url;
             HttpURLConnection connection = null;
@@ -156,6 +169,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //               Create connection
                 url = new URL(dataUrl);
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(60 * 1000);
 
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 InputStream is = connection.getInputStream();
@@ -185,15 +199,17 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                         URL urlimage = new URL(linkHref);
                         Bitmap image = BitmapFactory.decodeStream(urlimage.openConnection().getInputStream());
 
-                        podcasts.add(new PodcastItem(title, image, date, sound, description,
-                                Integer.parseInt(sound_l), linkHref));
+                        podcasts.add(new Podcast(title, image, date, sound, description, linkHref));
+
                     }
                 }
 
                 is.close();
+                return HttpURLConnection.HTTP_OK;
 
             } catch (Exception e) {
                 e.printStackTrace();
+                return HttpURLConnection.HTTP_INTERNAL_ERROR;
 
             } finally {
 
@@ -201,11 +217,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     connection.disconnect();
                 }
             }
-            return null;
+
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             if (MusicService.isRunning())
                 for (int i = 0; i < podcasts.size(); i++) {
@@ -213,7 +229,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                         podcasts.get(i).setPlaying(true);
                     else podcasts.get(i).setPlaying(false);
                 }
-            if (podcasts.size() == 0) {
+            if (result == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 statusText.setText(R.string.error_text);
                 statusText.setTextColor(getResources().getColor(R.color.colorAccent));
                 statusImg.setImageResource(R.drawable.ic_clear_black_24dp);
@@ -222,10 +238,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 statusImg.setImageResource(R.drawable.ic_done_black_24dp);
             }
 
+            refreshLayout.setRefreshing(false);
 
             listOfPodcast.setVisibility(View.VISIBLE);
             statusImg.clearAnimation();
-
             adapter.notifyDataSetChanged();
 
 

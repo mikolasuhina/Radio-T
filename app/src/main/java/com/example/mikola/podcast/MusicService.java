@@ -1,6 +1,7 @@
 package com.example.mikola.podcast;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -33,7 +34,7 @@ public class MusicService extends Service {
         return binder;
     }
 
-    PodcastItem podcast;
+    Podcast podcast;
 
     RemoteViews notificationView;
     Intent playIntent;
@@ -86,7 +87,7 @@ public class MusicService extends Service {
             mediaPlayer.stop();
         mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(MainActivity.thisPodcast.getSound());
+            mediaPlayer.setDataSource(MainActivity.currPodcast.getSound());
             mediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
@@ -201,8 +202,8 @@ public class MusicService extends Service {
         if (MainActivity.pos != usePosPodcastFromList) {
             usePosPodcastFromList = MainActivity.pos;
             initPlayer();
-            MainActivity.thisPodcast.setPlaying(true);
-            podcast=MainActivity.thisPodcast;
+            MainActivity.currPodcast.setPlaying(true);
+            podcast=MainActivity.currPodcast;
 
         }
         if (mediaPlayer.isPlaying()) {
@@ -242,7 +243,7 @@ public class MusicService extends Service {
 
         // Locate and set the Text into customnotificationtext.xml TextViews
         notificationView.setTextViewText(R.id.status_bar_track_name, podcast.getTitle());
-        notificationView.setTextViewText(R.id.text, "jewmdsfio");
+        notificationView.setTextViewText(R.id.text, "");
         notificationView.setImageViewBitmap(R.id.status_bar_album_art, podcast.getImage());
 
         notificationView.setImageViewResource(R.id.status_bar_collapse, android.R.drawable.ic_menu_close_clear_cancel);
@@ -272,11 +273,13 @@ public class MusicService extends Service {
             // build a complex notification, with buttons and such
             //
             builder = (NotificationCompat.Builder) builder.setCustomBigContentView(getComplexNotificationView());
+            builder.setPriority(Notification.PRIORITY_MAX);
         } else {
             // Build a simpler notification, without buttons
             //
             builder = (NotificationCompat.Builder) builder.setContentTitle(podcast.getTitle())
                     .setContentText(podcast.getTitle())
+                    .setPriority(Notification.PRIORITY_MAX)
                     .setSmallIcon(android.R.drawable.ic_menu_gallery);
         }
         return builder;
