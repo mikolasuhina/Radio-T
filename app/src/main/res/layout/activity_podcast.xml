@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/coloruse">
+        android:background="@color/coloruse"
+        android:padding="8dp">
 
         <ImageButton
             android:id="@+id/download"
@@ -21,7 +22,16 @@
             android:layout_alignParentRight="true"
             android:onClick="onClick"
             android:scaleType="centerCrop"
-            android:src="@drawable/music_download" />
+            android:src="@drawable/music_download_icon" />
+
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:onClick="onClick"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back_icon" />
 
         <TextView
             android:id="@+id/podcast_title"
@@ -31,6 +41,7 @@
             android:layout_alignTop="@+id/download"
             android:gravity="center"
             android:text="TextView"
+
             android:textSize="30sp" />
 
 
@@ -41,8 +52,8 @@
         android:id="@+id/content_layout_podcast_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/top_layout_podcast_activity"
         android:layout_above="@+id/player_layout_podcast_activity"
+        android:layout_below="@+id/top_layout_podcast_activity"
         android:orientation="vertical"
         android:weightSum="100">
 
@@ -77,15 +88,16 @@
         android:layout_marginTop="15dp"
         android:background="@color/coloruse"
         android:gravity="center"
+        android:padding="8dp"
         android:weightSum="100">
 
 
         <ImageButton
-            android:layout_centerVertical="true"
             android:id="@+id/play_pause_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/selector_list_item"
             android:gravity="center"
             android:padding="5dp"
@@ -93,11 +105,11 @@
 
 
         <LinearLayout
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
             android:id="@+id/time_player_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:orientation="vertical">
 
             <TextView
@@ -118,13 +130,13 @@
         </LinearLayout>
 
         <SeekBar
-            android:layout_centerInParent="true"
-            android:layout_toLeftOf="@+id/time_player_layout"
-            android:layout_toRightOf="@+id/play_pause_btn"
             android:id="@+id/progres"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            android:layout_toLeftOf="@+id/time_player_layout"
+            android:layout_toRightOf="@+id/play_pause_btn" />
 
     </RelativeLayout>
 </RelativeLayout>

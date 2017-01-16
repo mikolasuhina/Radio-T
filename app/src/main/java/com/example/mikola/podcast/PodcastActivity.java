@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class PodcastActivity extends Activity implements View.OnClickListener,SeekBar.OnSeekBarChangeListener {
+public class PodcastActivity extends Activity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private ImageButton play_pause;
     private ImageView image;
@@ -60,14 +60,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
 
 
         podcast = MainActivity.currPodcast;
-        //повний пиздець
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(podcast.getSound());
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         download = (ImageButton) findViewById(R.id.download);
 
@@ -79,12 +72,11 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
         description.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (itemDescriptionList.get(position).getLinc()!=null)
+                if (itemDescriptionList.get(position).getLinc() != null)
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(itemDescriptionList.get(position).getLinc())));
 
             }
         });
-
 
 
         image = (ImageView) findViewById(R.id.podcast_image);
@@ -92,7 +84,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
 
 
         info_time_all = (TextView) findViewById(R.id.time_all_info);
-        info_time_all.setText((getTimeString(mediaPlayer.getDuration())));
+
 
         info_time_this = (TextView) findViewById(R.id.time_this_info);
 
@@ -163,6 +155,7 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
 
         }
     }
+
     private String getTimeString(long millis) {
         StringBuffer buf = new StringBuffer();
 
@@ -198,14 +191,18 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
             }
             case R.id.download: {
 
-                File myFile = new File(Environment.DIRECTORY_DOWNLOADS+"/" + podcast.getTitle() + ".mp3");
+                File myFile = new File(Environment.DIRECTORY_DOWNLOADS + "/" + podcast.getTitle() + ".mp3");
 
                 if (myFile.exists()) {
                     Toast.makeText(context, R.string.file_exist, Toast.LENGTH_LONG).show();
                 } else {
-                   new DownloadSound(this,podcast);
+                    new DownloadSound(this, podcast);
                 }
-
+                break;
+            }
+            case R.id.back_btn:{
+                finish();
+                break;
             }
         }
 
@@ -265,12 +262,6 @@ public class PodcastActivity extends Activity implements View.OnClickListener,Se
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             AdapterItemDescription adapter = new AdapterItemDescription(itemDescriptionList, context);
-
-            if (new File(Environment.DIRECTORY_DOWNLOADS+"/" + podcast.getTitle() + ".mp3").exists()) {
-                download.setImageResource(R.drawable.music_downloaded);
-
-            }
-            // присваиваем адаптер списку
             description.setAdapter(adapter);
         }
 
