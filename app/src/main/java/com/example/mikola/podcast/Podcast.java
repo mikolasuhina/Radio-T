@@ -2,28 +2,20 @@ package com.example.mikola.podcast;
 
 import android.graphics.Bitmap;
 
+import java.util.UUID;
+
 /**
  * Created by mikola on 21.09.2016.
  */
 
 public class Podcast {
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    private int id;
+    private UUID id;
     private String title;
     private Bitmap image;
     private String data;
     private String sound;
     private String deck;
-    private String urlImage;
 
     private boolean playing;
 
@@ -43,17 +35,9 @@ public class Podcast {
         this.title = title;
     }
 
-
-    public Podcast(String title, Bitmap image, String data, String sound, String deck, String urlImage) {
-        this.title = title;
-        this.image = image;
-        this.data = data;
-        this.sound = sound;
-        this.deck = deck;
-
-        this.urlImage = urlImage;
+    public UUID getId() {
+        return id;
     }
-
 
     public Bitmap getImage() {
         return image;
@@ -79,16 +63,14 @@ public class Podcast {
         return deck;
     }
 
-
-
-    public String getUrlImage() {
-        return urlImage;
-    }
-
-    public Podcast(String title, Bitmap image, String data) {
+    public Podcast(String title, Bitmap image, String data, String sound, String deck) {
+        this.id = UUID.randomUUID();
         this.title = title;
         this.image = image;
         this.data = data;
+        this.sound = sound;
+        this.deck = deck;
     }
+
 }
 

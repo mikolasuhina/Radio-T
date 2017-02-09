@@ -19,22 +19,15 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created by mikola on 22.09.2016.
  */
 
-public class MusicService extends Service {
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
+public class MusicService extends Service implements MediaPlayer.OnPreparedListener {
 
-        MyBinder binder = new MyBinder();
-        Log.i(LOG_TAG, "onBind");
-        return binder;
-    }
-
-    Podcast podcast;
+    private Podcast podcast;
 
     RemoteViews notificationView;
     Intent playIntent;
@@ -44,81 +37,63 @@ public class MusicService extends Service {
     PendingIntent pendingIntent;
     PendingIntent ppreviousIntent;
     PendingIntent pcloseIntent;
-    MediaPlayer mediaPlayer;
-    static int usePosPodcastFromList = -1;
+    private MediaPlayer mediaPlayer;
     public static boolean running;
-    public static boolean startFore;
+    public static boolean playing;
+    public static UUID id;
+    private static final String LOG_TAG = "TAG";
 
-    public static boolean isStartFore() {
-        return startFore;
-    }
 
-    public static void setStartFore(boolean startFore) {
-        MusicService.startFore = startFore;
+    public static boolean isRunning() {
+        return running;
     }
 
     public static boolean isPlaying() {
         return playing;
     }
 
-    public static void setPlaying(boolean playing) {
-        MusicService.playing = playing;
-    }
-
-    public static boolean playing;
-    private static final String LOG_TAG = "myTag";
-
-    public static boolean isRunning() {
-        return running;
-    }
-
     public void setRunning(boolean running) {
         this.running = running;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
 
-    }
-
-    void initPlayer() {
+    private void initPlayer(Podcast podcast) {
         if (mediaPlayer != null)
-            mediaPlayer.stop();
+            mediaPlayer.release();
+
         mediaPlayer = new MediaPlayer();
+
         try {
-            mediaPlayer.setDataSource(MainActivity.currPodcast.getSound());
-            mediaPlayer.prepare();
+            mediaPlayer.setDataSource(podcast.getSound());
+            mediaPlayer.setOnPreparedListener(this);
+            mediaPlayer.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.i(LOG_TAG, "onStartCommand");
+        Log.d(LOG_TAG, "onStartCommand");
         if (intent.getAction().equals(Constans.ACTION.STARTFOREGROUND_ACTION)) {
-            Log.i(LOG_TAG, "Received Start Foreground Intent ");
-            notificationIntent = new Intent(this,MainActivity.class);
+            Log.d(LOG_TAG, "Received Start Foreground Intent ");
+            notificationIntent = new Intent(this, PodcastListActivity.class);
             notificationIntent.setAction(Constans.ACTION.MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            pendingIntent = PendingIntent.getActivity( this,
+            pendingIntent = PendingIntent.getActivity(this,
                     Constans.NOTIFICATION_ID.FOREGROUND_SERVICE,
                     notificationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-
 
 
             playIntent = new Intent(this, MusicService.class);
             playIntent.setAction(Constans.ACTION.PLAY_ACTION);
             pplayIntent = PendingIntent.getService(this, 0,
                     playIntent, 0);
-
 
 
             Intent closeIntent = new Intent(this, MusicService.class);
@@ -134,9 +109,7 @@ public class MusicService extends Service {
             Log.i(LOG_TAG, "Clicked Previous");
         } else if (intent.getAction().equals(Constans.ACTION.PLAY_ACTION)) {
 
-            if (isplaing())
-                mediaPlayer.pause();
-            else mediaPlayer.start();
+            play(podcast);
             update();
 
             Log.i(LOG_TAG, "Clicked Play");
@@ -147,83 +120,61 @@ public class MusicService extends Service {
                 Constans.ACTION.STOPFOREGROUND_ACTION)) {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
             mediaPlayer.stop();
-            stopForeground(true)
-            ;stopSelf();
+            stopForeground(true);
+            stopSelf();
             System.exit(0);
-
-
-
         }
         return START_NOT_STICKY;
 
     }
 
-    void showNotification() {
-        startForeground(Constans.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                buildNotification().build());
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        mediaPlayer.start();
+        playing = mediaPlayer.isPlaying();
+        update();
     }
 
-    class MyBinder extends Binder {
-        MusicService getService() {
-            return MusicService.this;
-        }
+
+    public static UUID getId() {
+        return id;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void update() {
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        mNotificationManager.notify(Constans.NOTIFICATION_ID.FOREGROUND_SERVICE, buildNotification().build());
-    }
-
-    boolean isplaing() {
-
+    public int getLenghtSound() {
         if (mediaPlayer != null)
-            return mediaPlayer.isPlaying();
-        else return false;
-    }
-
-    int getLenghtSound() {
-        if(mediaPlayer!=null)
-        return mediaPlayer.getDuration();
+            return mediaPlayer.getDuration();
         else return 0;
     }
 
-    int getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
+    public int getCurrentPosition() {
+        if (mediaPlayer != null)
+            return mediaPlayer.getCurrentPosition();
+        else return 0;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    boolean play_pause() {
 
-        playing=true;
+    public void play(Podcast podcast) {
 
-        if (MainActivity.pos != usePosPodcastFromList) {
-            usePosPodcastFromList = MainActivity.pos;
-            initPlayer();
-            MainActivity.currPodcast.setPlaying(true);
-            podcast=MainActivity.currPodcast;
-
+        if (!podcast.getId().equals(this.podcast.getTitle())) {
+            this.podcast = podcast;
+            initPlayer(podcast);
+            showNotification();
         }
-        if (mediaPlayer.isPlaying()) {
+
+        if (isPlaying()) {
             mediaPlayer.pause();
-            if(startFore)
-            update();
-            return false;
+            playing = false;
         } else {
             mediaPlayer.start();
-            if(startFore)
-            update();
-            return true;
+            playing = true;
         }
-
+        update();
 
     }
 
 
-
-    void seekTo(int progres) {
+    public void seekTo(int progres) {
         mediaPlayer.seekTo(progres);
     }
 
@@ -235,7 +186,7 @@ public class MusicService extends Service {
                 R.layout.notification_view
         );
         // Locate and set the Image into customnotificationtext.xml ImageViews
-        if (isplaing())
+        if (isPlaying())
             notificationView.setImageViewResource(R.id.status_bar_play, android.R.drawable.ic_media_pause);
         else
             notificationView.setImageViewResource(R.id.status_bar_play, android.R.drawable.ic_media_play);
@@ -255,8 +206,19 @@ public class MusicService extends Service {
 
     }
 
-    protected NotificationCompat.Builder buildNotification() {
+    private void showNotification() {
+        startForeground(Constans.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                buildNotification().build());
+    }
 
+    private void update() {
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(Constans.NOTIFICATION_ID.FOREGROUND_SERVICE, buildNotification().build());
+    }
+
+    protected NotificationCompat.Builder buildNotification() {
 
 
         NotificationCompat.Builder builder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
@@ -264,7 +226,7 @@ public class MusicService extends Service {
                 .setAutoCancel(true)
                 // Set PendingIntent into Notification
                 .setContentIntent(pendingIntent);
-        if (isplaing())
+        if (isPlaying())
             builder.setSmallIcon(android.R.drawable.ic_media_play);
         else
             builder.setSmallIcon(android.R.drawable.ic_media_pause);
@@ -285,9 +247,23 @@ public class MusicService extends Service {
         return builder;
     }
 
+    class MyBinder extends Binder {
+        MusicService getService() {
+            return MusicService.this;
+        }
+    }
+
     @Override
     public void unbindService(ServiceConnection conn) {
         super.unbindService(conn);
+    }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+
+        MyBinder binder = new MyBinder();
+        Log.i(LOG_TAG, "onBind");
+        return binder;
     }
 }

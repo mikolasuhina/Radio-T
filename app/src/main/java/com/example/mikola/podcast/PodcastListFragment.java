@@ -1,16 +1,18 @@
 package com.example.mikola.podcast;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -24,113 +26,65 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-
-import static com.example.mikola.podcast.Constans.FILE_SIZE;
 import static com.example.mikola.podcast.Constans.ITEM;
 import static com.example.mikola.podcast.Constans.MEDIA_CONTENT;
 import static com.example.mikola.podcast.Constans.PUB_DATA;
 import static com.example.mikola.podcast.Constans.SRC;
-
 import static com.example.mikola.podcast.Constans.dataUrl;
 
-public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
-    public static ArrayList<Podcast> podcasts;
-    public static Podcast currPodcast;
-    public static int pos;
+/**
+ * Created by mykola on 08.02.17.
+ */
+
+public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
     private ListView listOfPodcast;
     private SwipeRefreshLayout refreshLayout;
     private ImageView statusImg;
     private TextView statusText;
-
     private AdapterPodcasts adapter;
-    private Context context;
+
 
     private Animation animation;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_list_podcast, container, false);
+        animation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
 
-        animation = AnimationUtils.loadAnimation(this, R.anim.rotate);
-
-        context = this;
-
-        statusImg = (ImageView) findViewById(R.id.status_img);
-        statusText = (TextView) findViewById(R.id.status_text);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        listOfPodcast = (ListView) findViewById(R.id.list_podcasts);
+        statusImg = (ImageView) view.findViewById(R.id.status_img);
+        statusText = (TextView) view.findViewById(R.id.status_text);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        listOfPodcast = (ListView) view.findViewById(R.id.list_podcasts);
 
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeColors(Color.BLUE);
         statusText.setOnClickListener(this);
 
+        updateUI();
 
-        listOfPodcast.setAdapter(adapter);
-        listOfPodcast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                currPodcast = podcasts.get(position);
-                pos = position;
-
-                Intent intent = new Intent(context, PodcastActivity.class);
-                startActivity(intent);
-
-                Log.d("tag", "start PodcastActivity");
-            }
-        });
-
-        if (!MusicService.isRunning()){
-            new RequestTask().execute();}
-        else {
-            adapter = new AdapterPodcasts(podcasts, context);
-            listOfPodcast.setAdapter(adapter);
-            listOfPodcast.setVisibility(View.VISIBLE);
-            statusImg.clearAnimation();
-            adapter.notifyDataSetChanged();
-            statusText.setText(R.string.synchronize_complete);
-            statusImg.setImageResource(R.drawable.ic_done_black_24dp);
-
-        }
-
+        return view;
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (!MusicService.isRunning()) {
-            Intent startIntent = new Intent(context, MusicService.class);
-            startIntent.setAction(Constans.ACTION.STARTFOREGROUND_ACTION);
-            startService(startIntent);
-
-        } else {
-            if (MusicService.isRunning())
-                for (int i = 0; i < podcasts.size(); i++) {
-                    if (i == MusicService.usePosPodcastFromList)
-                        podcasts.get(i).setPlaying(true);
-                    else podcasts.get(i).setPlaying(false);
-                }
-            adapter.notifyDataSetChanged();
-        }
+    public void onResume() {
+        super.onResume();
+        updateUI();
     }
 
     @Override
     public void onRefresh() {
         refreshLayout.setRefreshing(true);
         new RequestTask().execute();
-
-
     }
 
     @Override
@@ -143,8 +97,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
     }
 
-
-    class RequestTask extends AsyncTask<String, String, Integer> {
+    private class RequestTask extends AsyncTask<String, String, Integer> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -152,11 +105,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             statusImg.startAnimation(animation);
             statusText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             statusText.setText(R.string.synchronize);
-
-            podcasts = new ArrayList<>();
-            adapter = new AdapterPodcasts(podcasts, context);
-            listOfPodcast.setAdapter(adapter);
-
         }
 
         @Override
@@ -182,24 +130,25 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     Node nNode = nodelist.item(i);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) nNode;
-
                         String title = getNode(Constans.TITLE, eElement);
-                        String date = getNode(PUB_DATA, eElement);
-                        String description = getNode(Constans.DECK, eElement);
 
-                        NodeList music = eElement.getElementsByTagName(MEDIA_CONTENT);
-                        Node mNode = music.item(0).getAttributes().getNamedItem(Constans.URL);
-                        String sound = mNode.getNodeValue();
-                        Node lNode = music.item(0).getAttributes().getNamedItem(FILE_SIZE);
-                        String sound_l = lNode.getNodeValue();
+                        if (PodcastsData.getInstance(getActivity()).getPodcast(title) == null) {
+                            String date = getNode(PUB_DATA, eElement);
+                            String description = getNode(Constans.DECK, eElement);
 
-                        org.jsoup.nodes.Document docHtml = Jsoup.parse(description);
-                        org.jsoup.nodes.Element link = docHtml.select(Constans.IMAGE).first();
-                        String linkHref = link.attr(SRC);
-                        URL urlimage = new URL(linkHref);
-                        Bitmap image = BitmapFactory.decodeStream(urlimage.openConnection().getInputStream());
+                            NodeList music = eElement.getElementsByTagName(MEDIA_CONTENT);
+                            Node mNode = music.item(0).getAttributes().getNamedItem(Constans.URL);
+                            String sound = mNode.getNodeValue();
 
-                        podcasts.add(new Podcast(title, image, date, sound, description, linkHref));
+                            org.jsoup.nodes.Document docHtml = Jsoup.parse(description);
+                            org.jsoup.nodes.Element link = docHtml.select(Constans.IMAGE).first();
+                            String linkHref = link.attr(SRC);
+                            URL urlimage = new URL(linkHref);
+                            Bitmap image = BitmapFactory.decodeStream(urlimage.openConnection().getInputStream());
+
+                            Podcast newPodcast = new Podcast(title, image, date, sound, description);
+                            PodcastsData.getInstance(getActivity()).getPodcasts().add(newPodcast);
+                        }
 
                     }
                 }
@@ -223,12 +172,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            if (MusicService.isRunning())
-                for (int i = 0; i < podcasts.size(); i++) {
-                    if (i == MusicService.usePosPodcastFromList)
-                        podcasts.get(i).setPlaying(true);
-                    else podcasts.get(i).setPlaying(false);
-                }
             if (result == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 statusText.setText(R.string.error_text);
                 statusText.setTextColor(getResources().getColor(R.color.colorAccent));
@@ -239,11 +182,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             }
 
             refreshLayout.setRefreshing(false);
-
             listOfPodcast.setVisibility(View.VISIBLE);
             statusImg.clearAnimation();
             adapter.notifyDataSetChanged();
-
 
         }
     }
@@ -255,14 +196,48 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         return nValue.getNodeValue();
     }
 
+    private void updateUI() {
+        PodcastsData data = PodcastsData.getInstance(getActivity());
+        List<Podcast> podcasts = data.getPodcasts();
+
+        if (adapter == null) {
+            adapter = new AdapterPodcasts(podcasts, getActivity());
+            listOfPodcast.setAdapter(adapter);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+
+        if (!MusicService.isRunning()) {
+            new RequestTask().execute();
+        } else {
+            listOfPodcast.setAdapter(adapter);
+            listOfPodcast.setVisibility(View.VISIBLE);
+            statusImg.clearAnimation();
+            statusText.setText(R.string.synchronize_complete);
+            statusImg.setImageResource(R.drawable.ic_done_black_24dp);
+
+        }
+
+
+    }
 
     @Override
-    protected void onDestroy() {
+    public void onStart() {
+        super.onStart();
+        if (!MusicService.isRunning()) {
+            Intent startIntent = new Intent(getActivity(), MusicService.class);
+            startIntent.setAction(Constans.ACTION.STARTFOREGROUND_ACTION);
+            getActivity().startService(startIntent);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
         if (!MusicService.isPlaying()) {
-            Intent stopIntent = new Intent(context, MusicService.class);
+            Intent stopIntent = new Intent(getActivity(), MusicService.class);
             stopIntent.setAction(Constans.ACTION.STOPFOREGROUND_ACTION);
-            stopService(stopIntent);
+            getActivity().stopService(stopIntent);
         }
     }
 
