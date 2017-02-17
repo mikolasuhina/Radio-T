@@ -2,6 +2,8 @@ package com.example.mikola.podcast;
 
 import android.content.Context;
 
+import com.example.mikola.podcast.objs.Podcast;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -9,13 +11,13 @@ import java.util.UUID;
 /**
  * Created by mykola on 08.02.17.
  */
-public class PodcastsData {
-    private static PodcastsData sData;
+public class DataPodcasts {
+    private static DataPodcasts sData;
     private List<Podcast> podcasts;
 
-    public static PodcastsData getInstance(Context context) {
+    public static DataPodcasts getInstance(Context context) {
         if (sData == null)
-            sData = new PodcastsData(context);
+            sData = new DataPodcasts(context);
 
         return sData;
     }
@@ -24,7 +26,7 @@ public class PodcastsData {
         return podcasts;
     }
 
-    private PodcastsData(Context context) {
+    private DataPodcasts(Context context) {
        podcasts = new ArrayList<>();
 
     }

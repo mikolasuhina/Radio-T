@@ -29,5 +29,4 @@ public class PodcastActivity extends SingleFragmentActivity {
         return PodcastFragment.newInstance(id);
     }
 
-
 }

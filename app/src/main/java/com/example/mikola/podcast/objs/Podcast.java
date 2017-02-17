@@ -1,4 +1,4 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.objs;
 
 import android.graphics.Bitmap;
 

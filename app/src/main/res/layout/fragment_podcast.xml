@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,71 +10,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/coloruse"
+        android:background="@drawable/shadow_background"
         android:padding="8dp">
 
         <ImageButton
-            android:id="@+id/download"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/download_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:onClick="onClick"
-            android:scaleType="centerCrop"
-            android:src="@drawable/music_download_icon" />
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_button"
+            android:padding="@dimen/notification_padding"
+            android:src="@drawable/icon_download" />
 
         <ImageButton
             android:id="@+id/back_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:onClick="onClick"
-            android:scaleType="centerCrop"
-            android:src="@drawable/back_icon" />
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_button"
+            android:padding="@dimen/notification_padding"
+            android:src="@drawable/icon_back" />
 
-        <TextView
+        <com.example.mikola.podcast.views.CustomFontTextView
             android:id="@+id/podcast_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/download"
-            android:layout_alignTop="@+id/download"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:text="TextView"
-
             android:textSize="30sp" />
-
 
     </RelativeLayout>
 
 
-    <LinearLayout
-        android:id="@+id/content_layout_podcast_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ListView
+        android:id="@+id/podcast_description"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/player_layout_podcast_activity"
         android:layout_below="@+id/top_layout_podcast_activity"
-        android:orientation="vertical"
-        android:weightSum="100">
-
-        <ImageView
-            android:id="@+id/podcast_image"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="top"
-            android:layout_weight="40"
-            app:srcCompat="@mipmap/ic_launcher" />
-
-        <ListView
-            android:id="@+id/podcast_description"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_weight="60"
-            android:divider="@android:color/white"
-            android:dividerHeight="10.0sp" />
-
-
-    </LinearLayout>
+        android:divider="@android:color/white"
+        android:dividerHeight="10.0sp"
+        android:paddingLeft="@dimen/notification_padding"
+        android:paddingRight="@dimen/notification_padding" />
 
 
     <RelativeLayout
@@ -84,8 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="15dp"
-        android:layout_marginTop="15dp"
-        android:background="@color/coloruse"
+        android:background="@color/colorPrimary"
         android:gravity="center"
         android:padding="8dp"
         android:weightSum="100">
@@ -97,10 +74,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/selector_list_item"
+            android:background="@drawable/selector_button"
             android:gravity="center"
             android:padding="5dp"
-            android:src="@drawable/play" />
+            android:src="@drawable/icon_play" />
 
 
         <LinearLayout
@@ -111,7 +88,7 @@
             android:layout_centerVertical="true"
             android:orientation="vertical">
 
-            <TextView
+            <com.example.mikola.podcast.views.CustomFontTextView
                 android:id="@+id/time_this_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,7 +96,7 @@
                 android:textSize="13sp"
                 android:typeface="monospace" />
 
-            <TextView
+            <com.example.mikola.podcast.views.CustomFontTextView
                 android:id="@+id/time_all_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

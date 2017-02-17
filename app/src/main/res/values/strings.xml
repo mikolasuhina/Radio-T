@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Radio-T</string>
-
-
     <string name="synchronize">"Cинхронізація . . . "</string>
     <string name="error_text">Error</string>
     <string name="synchronize_complete">Синхронізовано</string>

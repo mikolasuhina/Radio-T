@@ -1,19 +1,16 @@
 package com.example.mikola.podcast;
 
-import android.Manifest;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import java.io.File;
+import com.example.mikola.podcast.objs.Podcast;
 
 /**
  * Created by mikola on 14.11.2016.
@@ -51,7 +48,6 @@ public class DownloadSound {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 myDownloadRefference = mDownloadManager.enqueue(request);
             }
         }).start();

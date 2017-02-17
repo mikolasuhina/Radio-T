@@ -9,16 +9,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.mikola.podcast.adapters.AdapterPodcasts;
+import com.example.mikola.podcast.objs.Podcast;
 
 import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
@@ -34,11 +35,11 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import static com.example.mikola.podcast.Constans.ITEM;
-import static com.example.mikola.podcast.Constans.MEDIA_CONTENT;
-import static com.example.mikola.podcast.Constans.PUB_DATA;
-import static com.example.mikola.podcast.Constans.SRC;
-import static com.example.mikola.podcast.Constans.dataUrl;
+import static com.example.mikola.podcast.Constants.ITEM;
+import static com.example.mikola.podcast.Constants.MEDIA_CONTENT;
+import static com.example.mikola.podcast.Constants.PUB_DATA;
+import static com.example.mikola.podcast.Constants.SRC;
+import static com.example.mikola.podcast.Constants.dataUrl;
 
 /**
  * Created by mykola on 08.02.17.
@@ -51,7 +52,6 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
     private ImageView statusImg;
     private TextView statusText;
     private AdapterPodcasts adapter;
-
 
     private Animation animation;
 
@@ -101,7 +101,7 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            statusImg.setImageResource(R.drawable.ic_loop_black_24dp);
+            statusImg.setImageResource(R.drawable.icon_loop);
             statusImg.startAnimation(animation);
             statusText.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             statusText.setText(R.string.synchronize);
@@ -130,24 +130,24 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
                     Node nNode = nodelist.item(i);
                     if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) nNode;
-                        String title = getNode(Constans.TITLE, eElement);
+                        String title = getNode(Constants.TITLE, eElement);
 
-                        if (PodcastsData.getInstance(getActivity()).getPodcast(title) == null) {
+                        if (DataPodcasts.getInstance(getActivity()).getPodcast(title) == null) {
                             String date = getNode(PUB_DATA, eElement);
-                            String description = getNode(Constans.DECK, eElement);
+                            String description = getNode(Constants.DECK, eElement);
 
                             NodeList music = eElement.getElementsByTagName(MEDIA_CONTENT);
-                            Node mNode = music.item(0).getAttributes().getNamedItem(Constans.URL);
+                            Node mNode = music.item(0).getAttributes().getNamedItem(Constants.URL);
                             String sound = mNode.getNodeValue();
 
                             org.jsoup.nodes.Document docHtml = Jsoup.parse(description);
-                            org.jsoup.nodes.Element link = docHtml.select(Constans.IMAGE).first();
+                            org.jsoup.nodes.Element link = docHtml.select(Constants.IMAGE).first();
                             String linkHref = link.attr(SRC);
                             URL urlimage = new URL(linkHref);
                             Bitmap image = BitmapFactory.decodeStream(urlimage.openConnection().getInputStream());
 
                             Podcast newPodcast = new Podcast(title, image, date, sound, description);
-                            PodcastsData.getInstance(getActivity()).getPodcasts().add(newPodcast);
+                            DataPodcasts.getInstance(getActivity()).addPodcast(newPodcast);
                         }
 
                     }
@@ -175,10 +175,10 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
             if (result == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 statusText.setText(R.string.error_text);
                 statusText.setTextColor(getResources().getColor(R.color.colorAccent));
-                statusImg.setImageResource(R.drawable.ic_clear_black_24dp);
+                statusImg.setImageResource(R.drawable.icon_error);
             } else {
                 statusText.setText(R.string.synchronize_complete);
-                statusImg.setImageResource(R.drawable.ic_done_black_24dp);
+                statusImg.setImageResource(R.drawable.icon_done);
             }
 
             refreshLayout.setRefreshing(false);
@@ -197,7 +197,7 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     private void updateUI() {
-        PodcastsData data = PodcastsData.getInstance(getActivity());
+        DataPodcasts data = DataPodcasts.getInstance(getActivity());
         List<Podcast> podcasts = data.getPodcasts();
 
         if (adapter == null) {
@@ -214,7 +214,7 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
             listOfPodcast.setVisibility(View.VISIBLE);
             statusImg.clearAnimation();
             statusText.setText(R.string.synchronize_complete);
-            statusImg.setImageResource(R.drawable.ic_done_black_24dp);
+            statusImg.setImageResource(R.drawable.icon_done);
 
         }
 
@@ -226,7 +226,7 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
         super.onStart();
         if (!MusicService.isRunning()) {
             Intent startIntent = new Intent(getActivity(), MusicService.class);
-            startIntent.setAction(Constans.ACTION.STARTFOREGROUND_ACTION);
+            startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             getActivity().startService(startIntent);
         }
     }
@@ -234,9 +234,9 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!MusicService.isPlaying()) {
+        if (!MusicService.isStarted()) {
             Intent stopIntent = new Intent(getActivity(), MusicService.class);
-            stopIntent.setAction(Constans.ACTION.STOPFOREGROUND_ACTION);
+            stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
             getActivity().stopService(stopIntent);
         }
     }

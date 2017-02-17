@@ -1,4 +1,4 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +10,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.example.mikola.podcast.views.CustomFontTextView;
+import com.example.mikola.podcast.objs.Podcast;
+import com.example.mikola.podcast.PodcastActivity;
+import com.example.mikola.podcast.R;
+
 import java.util.List;
 
 import static com.example.mikola.podcast.PodcastFragment.PODCAST_ID;
@@ -24,9 +27,9 @@ import static com.example.mikola.podcast.PodcastFragment.PODCAST_ID;
 
 public class AdapterPodcasts extends BaseAdapter {
 
-    List<Podcast> data;
-    Context context;
-    LayoutInflater layoutInflater;
+    private List<Podcast> data;
+    private Context context;
+    private LayoutInflater layoutInflater;
 
 
     public AdapterPodcasts(List<Podcast> data, Context context) {
@@ -56,7 +59,7 @@ public class AdapterPodcasts extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         final Podcast podcast = data.get(position);
         convertView = layoutInflater.inflate(R.layout.item_podcastst_right, null);
-        TextView title = (TextView) convertView.findViewById(R.id.title);
+        CustomFontTextView title = (CustomFontTextView) convertView.findViewById(R.id.title);
         TextView data = (TextView) convertView.findViewById(R.id.data);
         ImageView image = (ImageView) convertView.findViewById(R.id.image);
         ImageView useItem = (ImageView) convertView.findViewById(R.id.useItem);
@@ -64,7 +67,7 @@ public class AdapterPodcasts extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, PodcastActivity.class);
-                intent.putExtra(PODCAST_ID,podcast.getId());
+                intent.putExtra(PODCAST_ID, podcast.getId());
                 context.startActivity(intent);
             }
         });
@@ -74,8 +77,8 @@ public class AdapterPodcasts extends BaseAdapter {
         image.setImageBitmap(podcast.getImage());
 
         if (podcast.isPlaying()) {
-            convertView.setBackgroundResource(R.color.coloruse);
-            useItem.setBackgroundResource(R.drawable.animsound);
+            convertView.setBackgroundResource(R.color.colorPrimary);
+            useItem.setBackgroundResource(R.drawable.speaker_animation);
             AnimationDrawable animation = (AnimationDrawable) useItem.getBackground();
             animation.start();
         }
