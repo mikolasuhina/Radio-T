@@ -8,10 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.example.mikola.podcast.views.CustomFontTextView;
-import com.example.mikola.podcast.objs.Description;
 import com.example.mikola.podcast.R;
+import com.example.mikola.podcast.objs.Description;
+import com.example.mikola.podcast.views.CustomFontTextView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -60,7 +63,7 @@ public class AdapterDescriptions extends BaseAdapter {
 
             convertView = layoutInflater.inflate(R.layout.item_description_only_logo, null);
             ImageView logo = (ImageView) convertView.findViewById(R.id.logo);
-            logo.setImageBitmap(itemDescription.getLogo());
+            Picasso.with(context).load(itemDescription.getLogo()).into(logo);
 
         } else {
             convertView = layoutInflater.inflate(R.layout.item_description, null);
@@ -79,6 +82,23 @@ public class AdapterDescriptions extends BaseAdapter {
 
         }
         return convertView;
+    }
+
+
+    public class PodcastHolder {
+        public RelativeLayout layout;
+        public CustomFontTextView title;
+        public TextView date;
+        public ImageView image;
+        public ImageView playStatus;
+
+        public PodcastHolder(View view) {
+            layout = (RelativeLayout) view;
+            title = (CustomFontTextView) view.findViewById(R.id.title);
+            date = (TextView) view.findViewById(R.id.date);
+            image = (ImageView) view.findViewById(R.id.image);
+            playStatus = (ImageView) view.findViewById(R.id.play_status);
+        }
     }
 
 }

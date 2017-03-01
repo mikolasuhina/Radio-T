@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.example.mikola.podcast.objs.Podcast;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -165,7 +166,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
 
         notificationView.setTextViewText(R.id.status_bar_track_name, sPodcast.getTitle());
-        notificationView.setImageViewBitmap(R.id.status_bar_album_art, sPodcast.getImage());
         notificationView.setImageViewResource(R.id.status_bar_collapse, android.R.drawable.ic_menu_close_clear_cancel);
 
         notificationView.setOnClickPendingIntent(R.id.status_bar_collapse, pcloseIntent);
@@ -176,14 +176,22 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     private void showNotification() {
-        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                buildNotification().build());
+        Notification notification = buildNotification().build();
+        Picasso.with(this).load(sPodcast.getImage())
+                .into(notificationView, R.id.status_bar_album_art,
+                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+
+        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
     }
 
     private void updateNotification() {
+        Notification notification = buildNotification().build();
+        Picasso.with(this).load(sPodcast.getImage())
+                .into(notificationView, R.id.status_bar_album_art,
+                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, buildNotification().build());
+        mNotificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
     }
 
     protected NotificationCompat.Builder buildNotification() {

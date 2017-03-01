@@ -142,10 +142,8 @@ public class PodcastListFragment extends Fragment implements SwipeRefreshLayout.
 
                             org.jsoup.nodes.Document docHtml = Jsoup.parse(description);
                             org.jsoup.nodes.Element link = docHtml.select(Constants.IMAGE).first();
-                            String linkHref = link.attr(SRC);
-                            URL urlimage = new URL(linkHref);
-                            Bitmap image = BitmapFactory.decodeStream(urlimage.openConnection().getInputStream());
-
+                            String image = link.attr(SRC);
+                            
                             Podcast newPodcast = new Podcast(title, image, date, sound, description);
                             DataPodcasts.getInstance(getActivity()).addPodcast(newPodcast);
                         }

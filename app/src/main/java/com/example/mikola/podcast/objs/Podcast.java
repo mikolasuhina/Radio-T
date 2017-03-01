@@ -12,7 +12,7 @@ public class Podcast {
 
     private UUID id;
     private String title;
-    private Bitmap image;
+    private String image;
     private String data;
     private String sound;
     private String deck;
@@ -39,11 +39,11 @@ public class Podcast {
         return id;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -63,7 +63,7 @@ public class Podcast {
         return deck;
     }
 
-    public Podcast(String title, Bitmap image, String data, String sound, String deck) {
+    public Podcast(String title, String image, String data, String sound, String deck) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.image = image;

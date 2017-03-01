@@ -7,7 +7,7 @@
 
 
     <ImageView
-        android:id="@+id/useItem"
+        android:id="@+id/play_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toLeftOf="@+id/image"
-        android:layout_toRightOf="@+id/useItem"
+        android:layout_toRightOf="@+id/play_status"
         android:clickable="false"
         android:focusable="false"
         android:orientation="vertical">
@@ -46,7 +46,7 @@
 
         <TextView
 
-            android:id="@+id/data"
+            android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

@@ -10,12 +10,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.mikola.podcast.views.CustomFontTextView;
-import com.example.mikola.podcast.objs.Podcast;
 import com.example.mikola.podcast.PodcastActivity;
 import com.example.mikola.podcast.R;
+import com.example.mikola.podcast.objs.Podcast;
+import com.example.mikola.podcast.views.CustomFontTextView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -27,14 +29,14 @@ import static com.example.mikola.podcast.PodcastFragment.PODCAST_ID;
 
 public class AdapterPodcasts extends BaseAdapter {
 
-    private List<Podcast> data;
+    private List<Podcast> podcasts;
     private Context context;
     private LayoutInflater layoutInflater;
 
 
-    public AdapterPodcasts(List<Podcast> data, Context context) {
+    public AdapterPodcasts(List<Podcast> podcasts, Context context) {
         super();
-        this.data = data;
+        this.podcasts = podcasts;
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
     }
@@ -42,12 +44,12 @@ public class AdapterPodcasts extends BaseAdapter {
     @Override
     public int getCount() {
 
-        return data.size();
+        return podcasts.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        return podcasts.get(position);
     }
 
     @Override
@@ -57,13 +59,32 @@ public class AdapterPodcasts extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final Podcast podcast = data.get(position);
+
         convertView = layoutInflater.inflate(R.layout.item_podcastst_right, null);
-        CustomFontTextView title = (CustomFontTextView) convertView.findViewById(R.id.title);
-        TextView data = (TextView) convertView.findViewById(R.id.data);
-        ImageView image = (ImageView) convertView.findViewById(R.id.image);
-        ImageView useItem = (ImageView) convertView.findViewById(R.id.useItem);
-        convertView.setOnClickListener(new View.OnClickListener() {
+
+        PodcastHolder podcastHolder = new PodcastHolder(convertView);
+        onBindHolder(podcastHolder, position);
+
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.left);
+        convertView.startAnimation(animation);
+
+        return convertView;
+    }
+
+
+    public void onBindHolder(PodcastHolder holder, int position) {
+        final Podcast podcast = podcasts.get(position);
+        holder.title.setText(podcast.getTitle());
+        holder.date.setText(podcast.getData());
+       // holder.image.setImageBitmap(podcast.getImage());
+        Picasso.with(context).load(podcast.getImage()).into(holder.image);
+        if (podcast.isPlaying()) {
+            holder.layout.setBackgroundResource(R.color.colorPrimary);
+            holder.playStatus.setBackgroundResource(R.drawable.speaker_animation);
+            AnimationDrawable animation = (AnimationDrawable) holder.playStatus.getBackground();
+            animation.start();
+        }
+        holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, PodcastActivity.class);
@@ -72,23 +93,24 @@ public class AdapterPodcasts extends BaseAdapter {
             }
         });
 
-        title.setText(podcast.getTitle());
-        data.setText(podcast.getData());
-        image.setImageBitmap(podcast.getImage());
+    }
 
-        if (podcast.isPlaying()) {
-            convertView.setBackgroundResource(R.color.colorPrimary);
-            useItem.setBackgroundResource(R.drawable.speaker_animation);
-            AnimationDrawable animation = (AnimationDrawable) useItem.getBackground();
-            animation.start();
+    public class PodcastHolder {
+        public RelativeLayout layout;
+        public CustomFontTextView title;
+        public TextView date;
+        public ImageView image;
+        public ImageView playStatus;
+
+        public PodcastHolder(View view) {
+            layout = (RelativeLayout) view;
+            title = (CustomFontTextView) view.findViewById(R.id.title);
+            date = (TextView) view.findViewById(R.id.date);
+            image = (ImageView) view.findViewById(R.id.image);
+            playStatus = (ImageView) view.findViewById(R.id.play_status);
         }
 
 
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.left);
-        convertView.startAnimation(animation);
-
-
-        return convertView;
     }
 
 }

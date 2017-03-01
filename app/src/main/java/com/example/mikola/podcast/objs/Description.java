@@ -11,10 +11,10 @@ public class Description {
     private String linc;
     private String text;
     private String time;
-    private Bitmap logo;
+    private String logo;
 
 
-    public Description(Bitmap logo) {
+    public Description(String logo) {
         this.logo = logo;
     }
 
@@ -25,11 +25,11 @@ public class Description {
         this.time = time;
     }
 
-    public Bitmap getLogo() {
+    public String getLogo() {
         return logo;
     }
 
-    public void setLogo(Bitmap logo) {
+    public void setLogo(String logo) {
         this.logo = logo;
     }
 
