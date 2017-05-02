@@ -1,4 +1,4 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.utils;
 
 /**
  * Created by mikola on 21.09.2016.
@@ -7,11 +7,13 @@ package com.example.mikola.podcast;
 public class Constants {
     public static final String TAG = "TAG";
     public static final String TITLE = "title";
-    public static final String IMAGE = "img";
+    public static final String ITUNES_IMAGE = "itunes:image";
     public static final String DECK = "description";
     public static final String ITEM = "item";
     public static final String URL = "url";
+    public static final String HREF = "href";
     public static final String MEDIA_CONTENT = "media:content";
+
     public static final String PUB_DATA = "pubDate";
     public static final String SRC = "src";
 

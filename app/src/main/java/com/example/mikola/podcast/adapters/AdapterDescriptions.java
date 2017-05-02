@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.mikola.podcast.R;
-import com.example.mikola.podcast.objs.Description;
+import com.example.mikola.podcast.models.Description;
 import com.example.mikola.podcast.views.CustomFontTextView;
 import com.squareup.picasso.Picasso;
 

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mikola.podcast.PodcastActivity">
+    tools:context="com.example.mikola.podcast.activitys.PodcastActivity">
 
     <RelativeLayout
         android:id="@+id/top_layout_podcast_activity"

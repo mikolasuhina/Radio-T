@@ -1,4 +1,4 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.network;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -10,7 +10,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.example.mikola.podcast.objs.Podcast;
+import com.example.mikola.podcast.R;
+import com.example.mikola.podcast.models.Podcast;
 
 /**
  * Created by mikola on 14.11.2016.

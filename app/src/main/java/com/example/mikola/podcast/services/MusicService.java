@@ -1,4 +1,4 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.services;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,15 +17,18 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.example.mikola.podcast.objs.Podcast;
+import com.example.mikola.podcast.R;
+import com.example.mikola.podcast.activitys.PodcastListActivity;
+import com.example.mikola.podcast.models.Podcast;
+import com.example.mikola.podcast.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
-import static com.example.mikola.podcast.Constants.ACTION_TYPE;
-import static com.example.mikola.podcast.Constants.BROADCAST_ACTION;
-import static com.example.mikola.podcast.Constants.SEND_DATA;
-import static com.example.mikola.podcast.Constants.SEND_DURATION;
+import static com.example.mikola.podcast.utils.Constants.ACTION_TYPE;
+import static com.example.mikola.podcast.utils.Constants.BROADCAST_ACTION;
+import static com.example.mikola.podcast.utils.Constants.SEND_DATA;
+import static com.example.mikola.podcast.utils.Constants.SEND_DURATION;
 
 /**
  * Created by mikola on 22.09.2016.
@@ -219,7 +222,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public class MyBinder extends Binder {
-        MusicService getService() {
+        public MusicService getService() {
             sendDuration();
             sendData();
             return MusicService.this;
@@ -300,7 +303,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         public void run() {
             Log.i(LOG_TAG, "thread start");
             while (started) {
-                Log.i(LOG_TAG, "run");
                 if (isStarted())
                     sendData();
                 try {

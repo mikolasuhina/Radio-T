@@ -1,10 +1,12 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.activitys;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+
+import com.example.mikola.podcast.R;
 
 /**
  * Created by mykola on 08.02.17.

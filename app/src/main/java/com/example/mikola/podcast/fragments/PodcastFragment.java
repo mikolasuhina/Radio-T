@@ -1,4 +1,4 @@
-package com.example.mikola.podcast;
+package com.example.mikola.podcast.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -25,9 +25,13 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.example.mikola.podcast.helpers.PodcastsManager;
+import com.example.mikola.podcast.R;
 import com.example.mikola.podcast.adapters.AdapterDescriptions;
-import com.example.mikola.podcast.objs.Description;
-import com.example.mikola.podcast.objs.Podcast;
+import com.example.mikola.podcast.models.Description;
+import com.example.mikola.podcast.models.Podcast;
+import com.example.mikola.podcast.services.MusicService;
+import com.example.mikola.podcast.network.DownloadSound;
 import com.example.mikola.podcast.views.CustomFontTextView;
 
 import org.jsoup.Jsoup;
@@ -36,11 +40,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static com.example.mikola.podcast.Constants.ACTION_TYPE;
-import static com.example.mikola.podcast.Constants.BROADCAST_ACTION;
-import static com.example.mikola.podcast.Constants.SEND_DATA;
-import static com.example.mikola.podcast.Constants.SEND_DURATION;
-import static com.example.mikola.podcast.Constants.TAG;
+import static com.example.mikola.podcast.utils.Constants.ACTION_TYPE;
+import static com.example.mikola.podcast.utils.Constants.BROADCAST_ACTION;
+import static com.example.mikola.podcast.utils.Constants.SEND_DATA;
+import static com.example.mikola.podcast.utils.Constants.SEND_DURATION;
+import static com.example.mikola.podcast.utils.Constants.TAG;
 
 /**
  * Created by mykola on 08.02.17.
@@ -69,7 +73,7 @@ public class PodcastFragment extends Fragment implements View.OnClickListener, S
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID id = (UUID) getArguments().getSerializable(PODCAST_ID);
-        podcast = DataPodcasts.getInstance(getActivity()).getPodcast(id);
+        podcast = PodcastsManager.getInstance(getActivity()).getPodcast(id);
         printLOG("onCreate");
         printLOG("onCreate id = " + id);
     }

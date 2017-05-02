@@ -3,6 +3,7 @@ package com.example.mikola.podcast.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,70 +14,52 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.mikola.podcast.PodcastActivity;
+import com.example.mikola.podcast.activitys.PodcastActivity;
 import com.example.mikola.podcast.R;
-import com.example.mikola.podcast.objs.Podcast;
+import com.example.mikola.podcast.models.Podcast;
 import com.example.mikola.podcast.views.CustomFontTextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import static com.example.mikola.podcast.PodcastFragment.PODCAST_ID;
+import static com.example.mikola.podcast.fragments.PodcastFragment.PODCAST_ID;
 
 /**
  * Created by mikola on 21.09.2016.
  */
 
-public class AdapterPodcasts extends BaseAdapter {
+public class AdapterPodcasts extends RecyclerView.Adapter<AdapterPodcasts.ViewHolder>{
 
     private List<Podcast> podcasts;
     private Context context;
-    private LayoutInflater layoutInflater;
+
 
 
     public AdapterPodcasts(List<Podcast> podcasts, Context context) {
         super();
         this.podcasts = podcasts;
         this.context = context;
-        layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public int getCount() {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_podcastst_right, null);
 
-        return podcasts.size();
+       // Animation animation = AnimationUtils.loadAnimation(context, R.anim.left);
+       // convertView.startAnimation(animation);
+
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+
     }
+
 
     @Override
-    public Object getItem(int position) {
-        return podcasts.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-
-        convertView = layoutInflater.inflate(R.layout.item_podcastst_right, null);
-
-        PodcastHolder podcastHolder = new PodcastHolder(convertView);
-        onBindHolder(podcastHolder, position);
-
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.left);
-        convertView.startAnimation(animation);
-
-        return convertView;
-    }
-
-
-    public void onBindHolder(PodcastHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         final Podcast podcast = podcasts.get(position);
         holder.title.setText(podcast.getTitle());
         holder.date.setText(podcast.getData());
-       // holder.image.setImageBitmap(podcast.getImage());
+        // holder.image.setImageBitmap(podcast.getImage());
         Picasso.with(context).load(podcast.getImage()).into(holder.image);
         if (podcast.isPlaying()) {
             holder.layout.setBackgroundResource(R.color.colorPrimary);
@@ -92,17 +75,25 @@ public class AdapterPodcasts extends BaseAdapter {
                 context.startActivity(intent);
             }
         });
-
     }
 
-    public class PodcastHolder {
+
+    @Override
+    public int getItemCount() {
+        return podcasts.size();
+    }
+
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         public RelativeLayout layout;
         public CustomFontTextView title;
         public TextView date;
         public ImageView image;
         public ImageView playStatus;
 
-        public PodcastHolder(View view) {
+        public ViewHolder(View view) {
+            super(view);
             layout = (RelativeLayout) view;
             title = (CustomFontTextView) view.findViewById(R.id.title);
             date = (TextView) view.findViewById(R.id.date);
