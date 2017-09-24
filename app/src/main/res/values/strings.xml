@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Radio-T</string>
-    <string name="synchronize">"Cинхронізація . . . "</string>
-    <string name="error_text">Error</string>
-    <string name="synchronize_complete">Синхронізовано</string>
-    <string name="downloading">Завантаження . . .</string>
-    <string name="download_complete">Завантаження завершене</string>
-    <string name="file_exist">Даний файл вже завантажено</string>
-    <string name="new_podcast">Новий подкаст</string>
+    <string name="downloading">Downloading . . .</string>
+    <string name="file_exist">File already exists</string>
+    <string name="new_podcast">New Podcast</string>
+    <string name="download">Download</string>
+    <string name="settings">Settings</string>
+    <string name="refresh">Refresh</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="action_settings">Settings</string>
+    <string name="notification_pref_title">Notification</string>
+    <string name="notification_pref_summury">Notify about new Podcast</string>
+    <string name="last_updated">Updated: %1$s</string>
+    <string name="not_available">File system is not available</string>
 </resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/notificationbg"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/status_bar_album_art"
+        android:layout_width="@dimen/notification_expanded_height"
+        android:layout_height="@dimen/notification_expanded_height"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerCrop"
+        tools:src="@mipmap/ic_launcher"/>
+
+
+    <ImageButton
+        android:id="@+id/status_bar_collapse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="?android:selectableItemBackground"
+        tools:src="@drawable/icon_play"/>
+
+    <RelativeLayout
+        android:id="@+id/textarea"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/notification_expanded_height"
+        android:layout_toLeftOf="@id/status_bar_collapse"
+        android:layout_toRightOf="@id/status_bar_album_art"
+        android:orientation="horizontal"
+        android:paddingRight="@dimen/text_margin">
+
+        <TextView
+            android:id="@+id/status_bar_track_name"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/notification_expanded_height"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textSize="30sp"
+            tools:text="Track Title"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/notification_expanded_height"
+            android:layout_toRightOf="@+id/status_bar_track_name">
+
+            <ImageButton
+                android:id="@+id/status_bar_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="?android:selectableItemBackground"
+                tools:src="@drawable/icon_pause"/>
+        </FrameLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

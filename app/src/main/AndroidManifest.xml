@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mikola.podcast">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mykola.podcast">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
@@ -12,26 +13,51 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activitys.PodcastListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        android:theme="@style/AppTheme.NoActionBar">
 
-                <category android:name="android.intent.category.LAUNCHER" />
+        <activity
+            android:name=".activitys.PodcastListActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activitys.PodcastActivity" />
 
-        <service android:name=".services.MusicService" />
+        <activity
+            android:name=".activitys.PodcastActivity"
+
+            android:parentActivityName=".activitys.PodcastListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mykola.podcast.activitys.PodcastListActivity"/>
+        </activity>
+
+        <activity
+            android:name=".activitys.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".activitys.PodcastListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mykola.podcast.activitys.PodcastListActivity"/>
+        </activity>
+
         <service
-            android:name=".services.LoadService"
-            android:exported="false" />
+            android:name=".services.MusicService"
+            android:exported="false"/>
+
+        <service
+            android:name=".services.NotificationService"
+            android:exported="false"/>
 
         <receiver android:name=".resivers.StartLoadServiceReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+
     </application>
 
 </manifest>

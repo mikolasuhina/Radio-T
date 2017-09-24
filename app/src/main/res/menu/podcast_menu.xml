@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/download_item"
+        android:icon="@drawable/icon_download"
+        android:title="@string/download"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/open_in_browser_item"
+        android:icon="@drawable/icon_public"
+        android:title="Open in Browser"/>
+
+</menu>
